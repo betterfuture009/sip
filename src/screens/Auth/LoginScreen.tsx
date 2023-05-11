@@ -1,17 +1,30 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, View, Image} from 'react-native';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {SafeAreaInsetsContext} from 'react-native-safe-area-context';
 import Text from '../../components/Base/Text';
+import InputField from '../../components/Base/InputField';
 import Button from '../../components/Base/Button';
 import Colors from '../../theme/Colors';
 import Images from '../../theme/Images';
 import {BUTTON_THEME_TYPE} from '../../constants';
 
 function LoginScreen() {
-  // Init.
-  useEffect(() => {}, []);
+  const [mobileNumber, setMobileNumber] = useState({value: '', error: ''});
 
-  const onLogin = () => {};
+  const onLogin = () => {
+    setMobileNumber({
+      value: mobileNumber.value,
+      error: 'The mobile number is not registered to any account',
+    });
+  };
 
   ////////////////////////////////////////////////////////////
   //////////////////// Heading Section ///////////////////////
@@ -44,13 +57,34 @@ function LoginScreen() {
       </View>
     );
   };
+  ////////////////////////////////////////////////////////////
+  ///////////////////// Form Section /////////////////////////
+  ////////////////////////////////////////////////////////////
+  const _renderForm = () => {
+    return (
+      <View style={styles.form}>
+        <InputField
+          label={'MOBILE NUMBER'}
+          value={mobileNumber.value}
+          keyboardType={'phone-pad'}
+          error={mobileNumber.error}
+          onChangeText={(text: string) => {
+            setMobileNumber({value: text, error: ''});
+          }}
+        />
+        <TouchableOpacity>
+          <Text underline>Changed number? Contact Us</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   ////////////////////////////////////////////////////////////
-  //////////////////// Footer Section //////////////////////////
+  //////////////////// Footer Section ////////////////////////
   ////////////////////////////////////////////////////////////
   const _renderFooter = (insets: any) => {
     return (
-      <View style={[styles.form, {paddingBottom: insets.bottom}]}>
+      <View style={[styles.footer, {paddingBottom: insets.bottom}]}>
         <Button
           title="Login"
           theme={BUTTON_THEME_TYPE.PURPLE}
@@ -69,7 +103,14 @@ function LoginScreen() {
       <SafeAreaInsetsContext.Consumer>
         {insets => (
           <View style={{flex: 1, paddingTop: insets?.top}}>
-            {_renderHeading(insets)}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{flex: 1}}>
+              <ScrollView>
+                {_renderHeading(insets)}
+                {_renderForm()}
+              </ScrollView>
+            </KeyboardAvoidingView>
             {_renderFooter(insets)}
           </View>
         )}
@@ -114,6 +155,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   form: {
+    marginTop: 48,
+    paddingHorizontal: 23,
+  },
+  footer: {
     position: 'absolute',
     left: 0,
     bottom: 0,
