@@ -55,7 +55,10 @@ const InputField = (props: InputFieldProps) => {
         ]}>
         <TextInput
           ref={props.innerRef}
-          style={styles.textInput}
+          style={[
+            styles.textInput,
+            props.error && props.error.length > 0 ? {color: Colors.red} : {},
+          ]}
           autoFocus={props.autoFocus}
           autoCapitalize={props.autoCapitalize}
           keyboardType={props.keyboardType}
